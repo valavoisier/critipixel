@@ -64,9 +64,6 @@ class VideoGame
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private DateTimeImmutable $updatedAt;
 
-    #[Column(type: Types::TEXT, nullable: true)]
-    private ?string $test = null;
-
     #[Range(min: 1, max: 5)]
     #[Column(nullable: true)]
     private ?int $rating = null;
@@ -176,18 +173,7 @@ class VideoGame
         $this->releaseDate = $releaseDate;
         return $this;
     }
-
-    public function getTest(): ?string
-    {
-        return $this->test;
-    }
-
-    public function setTest(?string $test): VideoGame
-    {
-        $this->test = $test;
-        return $this;
-    }
-
+        
     public function getRating(): ?int
     {
         return $this->rating;
