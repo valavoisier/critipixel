@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class LoginTest extends FunctionalTestCase
 {
+    //vérifier que l'on peut se connecter avec les bonnes informations d'identification-> IS_AUTHENTICATED = true, puis logout révoque l'accès
     public function testThatLoginShouldSucceeded(): void
     {
         $this->get('/auth/login');
@@ -26,7 +27,7 @@ final class LoginTest extends FunctionalTestCase
 
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
     }
-
+    //vérifier que l'on ne peut pas se connecter avec les mauvaises informations d'identification / Mauvais mot de passe-> IS_AUTHENTICATED = false
     public function testThatLoginShouldFailed(): void
     {
         $this->get('/auth/login');

@@ -58,6 +58,9 @@ class VideoGame
     #[Column(type: Types::TEXT)]
     private string $description;
 
+    #[Column(type: Types::TEXT, nullable: true)]
+    private ?string $test = null;
+
     #[Column(type: Types::DATE_IMMUTABLE)]
     private DateTimeInterface $releaseDate;
 
@@ -160,6 +163,17 @@ class VideoGame
     public function setDescription(string $description): VideoGame
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function getTest(): ?string
+    {
+        return $this->test;
+    }
+
+    public function setTest(?string $test): VideoGame
+    {
+        $this->test = $test;
         return $this;
     }
 

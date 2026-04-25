@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ShowTest extends FunctionalTestCase
 {
+    //vérifier que l'on peut accéder à la page de détail d'un jeu vidéo avec une URL valide, puis vérifier que les informations du jeu vidéo sont affichées correctement
+    //GET /jeu-video-0 → 200, <h1> contient "Jeu vidéo 0"
     public function testShouldShowVideoGame(): void
     {
         $this->get('/jeu-video-0');
