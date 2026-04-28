@@ -48,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[NotBlank]
+    #[Length(min: 12)]
     #[NotCompromisedPassword]
     #[PasswordStrength]
     private ?string $plainPassword = null;

@@ -17,7 +17,7 @@ abstract class FunctionalTestCase extends WebTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::bootKernel();
+        //static::bootKernel();
         $this->client = static::createClient();
     }
 
