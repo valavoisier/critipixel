@@ -12,10 +12,25 @@ use PHPUnit\Framework\TestCase;
 class RatingHandlerTest extends TestCase
 {
     /**
+     * Teste la méthode calculateAverage() avec plusieurs scénarios.
+     * 
+     * Objectif :
+     * Vérifier que la moyenne des notes d’un jeu vidéo est correctement calculée
+     * dans plusieurs situations : aucune note, une seule note, plusieurs notes,
+     * et un cas nécessitant un arrondi supérieur.
+     *
+     * Méthodologie :
+     * - Création d’un objet VideoGame en mémoire (pas de base de données)
+     * - Ajout de Review avec différentes valeurs de rating
+     * - Appel de calculateAverage()
+     * - Vérification de la moyenne obtenue avec assertSame(), correspond à valeur attendue (int ou null)
+     *
+     * Le data provider fournit les différents scénarios de test.
+     */
+
+    /**
      * @dataProvider provideRatingsForAverage
      */
-    //vérifier que la méthode calculateAverage() calcule correctement la moyenne des notes d’un jeu vidéo, 
-    //en testant différents scénarios : aucun avis, un seul avis, plusieurs avis avec une moyenne arrondie (4 appels phpunit)
     public function testCalculateAverage(array $ratings, ?int $expectedAverage): void
     {
         // création des objets directement sans BDD
@@ -28,7 +43,7 @@ class RatingHandlerTest extends TestCase
             $videoGame->getReviews()->add($review);
         }
 
-        // Calcul de la moyenne
+        // Exécution de la méthode à tester / Calcul de la moyenne
         $ratingHandler->calculateAverage($videoGame);
 
         // Vérification que la moyenne calculée correspond à la moyenne attendue
@@ -36,8 +51,11 @@ class RatingHandlerTest extends TestCase
         self::assertSame($expectedAverage, $videoGame->getAverageRating());
     }
 
-    //Data Provider pour testCalculateAverage() : différentes combinaisons de notes et la moyenne attendue, 
-    //iterable pour pouvoir yield plusieurs scénarios de test
+    /**
+     * Fournit les jeux de données pour testCalculateAverage().
+     * Chaque entrée représente un scénario de test.
+     * iterable pour pouvoir yield plusieurs scénarios de test
+     */
     public static function provideRatingsForAverage(): iterable 
     {
         yield 'aucune note'      => [[], null]; // pas de notes → moyenne = null
@@ -47,9 +65,28 @@ class RatingHandlerTest extends TestCase
     }
 
     /**
+     * Teste la méthode countRatingsPerValue() qui compte combien de notes de chaque valeur (1 à 5) un jeu possède.
+     *
+     * Objectif :
+     * Vérifier que les compteurs de notes (1 à 5) sont correctement incrémentés
+     * en fonction des Review associées au jeu vidéo.
+     *
+     * Méthodologie :
+     * - Création d’un VideoGame en mémoire
+     * - Ajout de Review avec différentes valeurs de rating
+     * - Appel de countRatingsPerValue()
+     * - Vérification individuelle des 5 compteurs via assertSame()
+     *
+     * Le data provider fournit plusieurs distributions de notes
+     * et les valeurs attendues pour chaque compteur.
+     *  - le cas sans avis
+     *  - une distribution variée
+     *  - une note de chaque valeur
+     */
+
+    /**
      * @dataProvider provideRatingsForCount
      */
-    // vérifier que countRatingsPerValue() remplit correctement les compteurs par valeur (1 à 5)
     public function testCountRatingsPerValue(array $ratings, int $expectedOne, int $expectedTwo, int $expectedThree, int $expectedFour, int $expectedFive): void
     {
         // création des objets directement sans BDD
