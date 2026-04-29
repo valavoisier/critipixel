@@ -58,4 +58,33 @@ final class AddReviewTest extends FunctionalTestCase
         // form → <form> généré par form_start(form) dans show.html.twig, conditionné par is_granted('review', video_game)
         self::assertSelectorNotExists('#pane-reviews form');
     }
+
+    /**
+     * Vérifie qu'une soumission sans note (valeur invalide hors des choix 1-5)
+     * renvoie une réponse 422 Unprocessable Entity et réaffiche le formulaire.
+     */
+    public function testShouldReturn422WhenRatingIsMissing(): void
+    {
+        // user+1 n'a pas encore noté jeu-video-0
+        $this->login('user+1@email.com');
+
+        $this->get('/jeu-video-0');
+        self::assertResponseIsSuccessful();
+
+        // Soumission sans note : on désactive la validation côté crawler pour pouvoir
+        // envoyer une valeur hors des choix valides et tester la validation serveur
+        $crawler = $this->client->getCrawler();
+        $form = $crawler->selectButton('Poster')->form();
+        $form->disableValidation();
+        $form->setValues([
+            'review[rating]'  => '',
+            'review[comment]' => 'Super jeu !',
+        ]);
+        $this->client->submit($form);
+
+        // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422
+        self::assertResponseStatusCodeSame(422);
+        // Le formulaire est toujours affiché avec les erreurs
+        self::assertSelectorExists('#pane-reviews form');
+    }
 }
