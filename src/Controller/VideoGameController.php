@@ -39,8 +39,11 @@ final class VideoGameController extends AbstractController
 
         $form = $this->createForm(ReviewType::class, $review)->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod(Request::METHOD_POST)) {
             $this->denyAccessUnlessGranted('review', $videoGame);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $review->setVideoGame($videoGame);
             $review->setUser($this->getUser());
             $entityManager->persist($review);

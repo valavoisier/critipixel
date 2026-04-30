@@ -60,62 +60,98 @@ final class AddReviewTest extends FunctionalTestCase
         self::assertSelectorNotExists('#pane-reviews form');
     }
 
-    /**
-     * Vérifie qu'une soumission sans note (valeur invalide hors des choix 1-5)
-     * renvoie une réponse 422 Unprocessable Entity et réaffiche le formulaire.
+        /**
+     * Vérifie qu'une soumission de données invalides renvoie 422
+     * et que le formulaire est réaffiché.
+     *
+     * Cas testés (dataProvider) :
+     *  - note manquante
+     *  - commentaire trop long
+     *
+     * Étapes :
+     *  1. user+1 accède à la page du jeu → statut 200, formulaire visible.
+     *  2. On remplit le formulaire avec des valeurs invalides.
+     *     disableValidation() permet d'envoyer des données invalides
+     *     malgré la validation HTML du DomCrawler.
+     *  3. Soumission du formulaire → Symfony renvoie 422
+     *     car les données ne passent pas la validation du FormType.
+     *  4. Le formulaire doit être réaffiché avec les erreurs.
      */
     
     /**
-    * Test fonctionnel : vérifie la gestion d'une soumission invalide (note manquante).
-    *
-    * Objectif :
-    * - S'assurer que le contrôleur renvoie bien un statut HTTP 422 lorsque la note
-    *   envoyée est vide ou hors des valeurs autorisées.
-    * - Vérifier que le formulaire est réaffiché afin que l'utilisateur puisse corriger
-    *   son erreur.
-    *
-    * Détails du scénario :
-    * 1. L'utilisateur authentifié accède à la page du jeu vidéo.
-    * 2. Le formulaire est récupéré puis modifié pour désactiver la validation HTML,
-    *    ce qui permet d'envoyer une valeur invalide côté serveur.
-    * 3. Le formulaire est soumis avec une note vide.
-    * 4. Le contrôleur doit renvoyer un statut 422 (Unprocessable Entity).
-    * 5. Le formulaire doit rester visible, indiquant que la validation a échoué.
-    */
-    public function testShouldReturn422WhenRatingIsMissing(): void
+     * @dataProvider provideInvalidFormData
+     */
+    public function testShouldReturn422WhenFormDataIsInvalid(array $values): void
     {
-        /* 1. L'utilisateur est connecté*/
         // user+1 n'a pas encore noté jeu-video-0
         $this->login('user+1@email.com');
 
-        /* 2. Accès à la page du jeu → formulaire visible */
         $this->get('/jeu-video-0');
+// dump($this->client->getResponse()->getStatusCode());// 200 page jeu chargée
         self::assertResponseIsSuccessful();
 
-        /* 3. Préparation d'une soumission invalide (désactivation validation HTML) 
-              Soumission sans note : on désactive la validation côté crawler pour pouvoir
-              envoyer une valeur hors des choix valides et tester la validation serveur */
-        // Récupère le formulaire du crawler
-        $crawler = $this->client->getCrawler();
-        // Désactive la validation HTML pour pouvoir soumettre une valeur invalide
-        // Le bouton 'Poster' est défini dans show.html.twig, ligne 83      
-        $form = $crawler->selectButton('Poster')->form();
-        // Modifie les valeurs du formulaire pour envoyer une note vide
+        // disableValidation() est nécessaire pour bypasser la validation HTML du DomCrawler
+        // (ChoiceFormField rejette les valeurs hors choix avant même d'envoyer la requête)
+        $form = $this->client->getCrawler()->selectButton('Poster')->form();
         $form->disableValidation();
-        // 'review[rating]' correspond au name de l'input de la note dans le formulaire
-        // 'review[comment]' correspond au name de l'input du commentaire dans le formulaire
-        $form->setValues([
-            'review[rating]'  => '',
-            'review[comment]' => 'Super jeu !',
-        ]);
-        
-        /* 4. Soumission du formulaire */
+        $form->setValues($values);
         $this->client->submit($form);
 
-        /* 5. Le contrôleur doit renvoyer 422 et réafficher le formulaire */ 
-        // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422  
+// dump($this->client->getResponse()->getStatusCode());//statut 422
+// dump($this->client->getResponse()->getContent());//formulaire avec erreurs
+        // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422
         self::assertResponseStatusCodeSame(422);
         // Le formulaire est toujours affiché avec les erreurs
         self::assertSelectorExists('#pane-reviews form');
+    }
+
+    /**
+     * Fournit les jeux de données invalides pour testShouldReturn422WhenFormDataIsInvalid.
+     */
+    public static function provideInvalidFormData(): iterable
+    {
+        yield 'note manquante'        => [['review[rating]' => '',  'review[comment]' => 'Super jeu !']];
+        yield 'commentaire trop long' => [['review[rating]' => '3', 'review[comment]' => str_repeat('a', 1001)]];
+    }
+
+    /**
+     * Vérifie que le formulaire d'ajout de review n'est pas affiché
+     * pour un utilisateur non authentifié.
+     *
+     * Le VideoGameVoter retourne false si l'utilisateur n'est pas une instance de User
+     * → is_granted('review', video_game) vaut false → le formulaire est absent du HTML.
+     */
+    public function testShouldNotShowFormWhenUserIsNotAuthenticated(): void
+    {
+        // Aucun login : l'utilisateur est anonyme
+        $this->get('/jeu-video-0');
+        self::assertResponseIsSuccessful();
+
+        // Le voter refuse l'accès → le formulaire ne doit pas être affiché
+        // #pane-reviews → <div id="pane-reviews"> dans Tabs.html.twig (onglet "Avis")
+        // form → conditionné par is_granted('review', video_game) dans show.html.twig
+        self::assertSelectorNotExists('#pane-reviews form');
+    }
+
+    /**
+     * Vérifie qu'un utilisateur non connecté qui envoie un POST valide
+     * est redirigé vers la page de login (302 → /auth/login).
+     *
+     * Note : avec un firewall form_login + lazy:true, Symfony redirige vers le login
+     * plutôt que de renvoyer 401 (comportement réservé aux API stateless).
+     * denyAccessUnlessGranted() dans le contrôleur déclenche cette redirection.
+     */
+    public function testShouldRedirectToLoginWhenUnauthenticatedUserPostsReview(): void
+    {
+        // Aucun login : l'utilisateur est anonyme
+        $this->client->request('POST', '/jeu-video-0', [
+            'review' => [
+                'rating'  => 3,
+                'comment' => 'Super jeu !',
+            ],
+        ]);
+
+        // Le firewall form_login redirige l'anonyme vers la page de login
+        self::assertResponseRedirects('/auth/login');
     }
 }

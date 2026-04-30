@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 
@@ -35,6 +36,7 @@ class Review
     #[Column]
     private int $rating;
 
+    #[Length(max: 1000)]
     #[Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
 
