@@ -77,7 +77,7 @@ final class AddReviewTest extends FunctionalTestCase
      *     car les données ne passent pas la validation du FormType.
      *  4. Le formulaire doit être réaffiché avec les erreurs.
      */
-    
+
     /**
      * @dataProvider provideInvalidFormData
      */
@@ -125,6 +125,8 @@ final class AddReviewTest extends FunctionalTestCase
     {
         // Aucun login : l'utilisateur est anonyme
         $this->get('/jeu-video-0');
+// dump($this->client->getResponse()->getStatusCode()); // 200 page jeu chargée publique
+// dump($this->client->getResponse()->getContent()); // html généré sans formulaire
         self::assertResponseIsSuccessful();
 
         // Le voter refuse l'accès → le formulaire ne doit pas être affiché
@@ -150,6 +152,9 @@ final class AddReviewTest extends FunctionalTestCase
                 'comment' => 'Super jeu !',
             ],
         ]);
+        
+// dump($this->client->getResponse()->getStatusCode()); // 302 redirection
+// dump($this->client->getResponse()->headers->all());  // Location: /auth/login
 
         // Le firewall form_login redirige l'anonyme vers la page de login
         self::assertResponseRedirects('/auth/login');
