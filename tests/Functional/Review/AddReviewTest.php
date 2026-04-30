@@ -18,10 +18,11 @@ final class AddReviewTest extends FunctionalTestCase
      */
     public function testShouldAddReview(): void
     {
+        // utilisateur connecté
         // user+1 n'a pas encore noté jeu-video-0 (seul user+0 l'a noté en fixture)
         $this->login('user+1@email.com');
 
-        // 1. Le formulaire est visible pour un utilisateur autorisé
+        // 1. Accès à la page du jeu. Le formulaire est visible pour un utilisateur autorisé
         $this->get('/jeu-video-0');
         self::assertResponseIsSuccessful();
         // #pane-reviews → <div id="pane-reviews"> dans Tabs.html.twig (onglet "Avis")
@@ -63,26 +64,56 @@ final class AddReviewTest extends FunctionalTestCase
      * Vérifie qu'une soumission sans note (valeur invalide hors des choix 1-5)
      * renvoie une réponse 422 Unprocessable Entity et réaffiche le formulaire.
      */
+    
+    /**
+    * Test fonctionnel : vérifie la gestion d'une soumission invalide (note manquante).
+    *
+    * Objectif :
+    * - S'assurer que le contrôleur renvoie bien un statut HTTP 422 lorsque la note
+    *   envoyée est vide ou hors des valeurs autorisées.
+    * - Vérifier que le formulaire est réaffiché afin que l'utilisateur puisse corriger
+    *   son erreur.
+    *
+    * Détails du scénario :
+    * 1. L'utilisateur authentifié accède à la page du jeu vidéo.
+    * 2. Le formulaire est récupéré puis modifié pour désactiver la validation HTML,
+    *    ce qui permet d'envoyer une valeur invalide côté serveur.
+    * 3. Le formulaire est soumis avec une note vide.
+    * 4. Le contrôleur doit renvoyer un statut 422 (Unprocessable Entity).
+    * 5. Le formulaire doit rester visible, indiquant que la validation a échoué.
+    */
     public function testShouldReturn422WhenRatingIsMissing(): void
     {
+        /* 1. L'utilisateur est connecté*/
         // user+1 n'a pas encore noté jeu-video-0
         $this->login('user+1@email.com');
 
+        /* 2. Accès à la page du jeu → formulaire visible */
         $this->get('/jeu-video-0');
         self::assertResponseIsSuccessful();
 
-        // Soumission sans note : on désactive la validation côté crawler pour pouvoir
-        // envoyer une valeur hors des choix valides et tester la validation serveur
+        /* 3. Préparation d'une soumission invalide (désactivation validation HTML) 
+              Soumission sans note : on désactive la validation côté crawler pour pouvoir
+              envoyer une valeur hors des choix valides et tester la validation serveur */
+        // Récupère le formulaire du crawler
         $crawler = $this->client->getCrawler();
+        // Désactive la validation HTML pour pouvoir soumettre une valeur invalide
+        // Le bouton 'Poster' est défini dans show.html.twig, ligne 83      
         $form = $crawler->selectButton('Poster')->form();
+        // Modifie les valeurs du formulaire pour envoyer une note vide
         $form->disableValidation();
+        // 'review[rating]' correspond au name de l'input de la note dans le formulaire
+        // 'review[comment]' correspond au name de l'input du commentaire dans le formulaire
         $form->setValues([
             'review[rating]'  => '',
             'review[comment]' => 'Super jeu !',
         ]);
+        
+        /* 4. Soumission du formulaire */
         $this->client->submit($form);
 
-        // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422
+        /* 5. Le contrôleur doit renvoyer 422 et réafficher le formulaire */ 
+        // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422  
         self::assertResponseStatusCodeSame(422);
         // Le formulaire est toujours affiché avec les erreurs
         self::assertSelectorExists('#pane-reviews form');
