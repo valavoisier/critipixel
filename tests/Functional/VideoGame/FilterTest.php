@@ -100,6 +100,7 @@ final class FilterTest extends FunctionalTestCase
 
     /**
      * Un tag inexistant doit retourner 0 résultat.
+     * Approche différente — les cas valides utilisent submitForm (passe par le formulaire Symfony), le cas invalide utilise get() avec le paramètre brut dans l'URL (car EntityType rejetterait l'ID inconnu avant même de soumettre via submitForm).
      */
     public function testShouldReturnNoResultsForNonExistentTag(): void
     {
