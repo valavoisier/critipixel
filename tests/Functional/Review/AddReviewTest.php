@@ -60,7 +60,7 @@ final class AddReviewTest extends FunctionalTestCase
         self::assertSelectorNotExists('#pane-reviews form');
     }
 
-        /**
+    /**
      * Vérifie qu'une soumission de données invalides renvoie 422
      * et que le formulaire est réaffiché.
      *

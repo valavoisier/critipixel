@@ -67,6 +67,13 @@ final class VideoGamesList implements Countable, IteratorAggregate
             ->handleRequest($request)
             ->createView();
 
+        // EntityType ignore silencieusement les IDs invalides : si des IDs ont été soumis
+        // mais que getTags() revient vide, c'est que tous les IDs soumis sont inexistants en BDD.
+        $submittedTags = $request->query->all('filter')['tags'] ?? [];
+        if (!empty($submittedTags) && empty($this->filter->getTags())) {
+            $this->filter->setHasInvalidTags(true);
+        }
+
         $this->data = $this->videoGameRepository->getVideoGames($this->pagination, $this->filter);
 
         $this->pagination->init(count($this->data), count($this));

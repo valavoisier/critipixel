@@ -48,7 +48,8 @@ class RatingHandlerTest extends TestCase
 
         // Vérification que la moyenne calculée correspond à la moyenne attendue
         // vérification type et valeur de la moyenne (int ou null)
-        self::assertSame($expectedAverage, $videoGame->getAverageRating());
+  
+      self::assertSame($expectedAverage, $videoGame->getAverageRating());
     }
 
     /**
@@ -63,7 +64,6 @@ class RatingHandlerTest extends TestCase
         yield 'plusieurs notes'  => [[1, 2, 3, 4, 5], 3];   // ceil(15/5) = 3
         yield 'moyenne arrondie' => [[1, 2], 2];             // ceil(3/2) = ceil(1.5) = 2
     }
-
     /**
      * Teste la méthode countRatingsPerValue() qui compte combien de notes de chaque valeur (1 à 5) un jeu possède.
      *

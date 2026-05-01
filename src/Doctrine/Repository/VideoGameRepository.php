@@ -48,6 +48,12 @@ final class VideoGameRepository extends ServiceEntityRepository
                 ->setParameter('search', '%' . $filter->getSearch() . '%');
         }
 
+        // Si des tags invalides ont été soumis, on force 0 résultat plutôt que d'ignorer le filtre
+        if ($filter->hasInvalidTags()) {
+            $queryBuilder->andWhere('1 = 0');
+            return new Paginator($queryBuilder, fetchJoinCollection: true);
+        }
+
         if ([] !== $filter->getTags()) {
             // Utilisez une sous-requête pour filtrer les jeux ayant tous les tags requis
             $subQuery = $this->getEntityManager()->createQueryBuilder()
