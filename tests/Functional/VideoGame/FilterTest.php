@@ -100,13 +100,16 @@ final class FilterTest extends FunctionalTestCase
 
     /**
      * Un tag inexistant doit retourner 0 résultat.
-     * Approche différente — les cas valides utilisent submitForm (passe par le formulaire Symfony), le cas invalide utilise get() avec le paramètre brut dans l'URL (car EntityType rejetterait l'ID inconnu avant même de soumettre via submitForm).
+     * Approche différente: 
+     * — les cas valides utilisent submitForm (passe par le formulaire Symfony), 
+     * — le cas invalide utilise get() avec le paramètre brut dans l'URL 
+     * (car EntityType rejetterait l'ID inconnu avant même de soumettre via submitForm).
      */
     public function testShouldReturnNoResultsForNonExistentTag(): void
     {
         $this->get('/', ['filter' => ['tags' => [99999]]]);
-        self::assertResponseIsSuccessful();
-        self::assertSelectorCount(0, 'article.game-card');
+        self::assertResponseIsSuccessful();// la page se charge sans erreur même si le tag n’existe pas
+        self::assertSelectorCount(0, 'article.game-card');// aucun jeu ne correspond à ce tag fictif, donc 0 cartes affichées
     }
 
 }
