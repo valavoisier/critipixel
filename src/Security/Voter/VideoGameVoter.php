@@ -11,6 +11,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 // Il est utilisé dans le template show.html.twig pour conditionner l'affichage du formulaire de review (is_granted('review', video_game)).
 // utilisateur non connecté ou ayant déjà voté (false) → formulaire de review non affiché
 // utilisateur connecté et n'ayant pas encore voté (true) → formulaire de review affiché
+
+/**
+ * @extends Voter<string, VideoGame>
+ */
 class VideoGameVoter extends Voter
 {
     public const REVIEW = 'review';
