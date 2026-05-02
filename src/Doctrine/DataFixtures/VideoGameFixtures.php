@@ -49,7 +49,9 @@ final class VideoGameFixtures extends Fixture implements DependentFixtureInterfa
             $videoGame->getTags()->add($tags[($index + 1) % count($tags)]);
         }
 
-        array_walk($videoGames, [$manager, 'persist']);
+        array_walk($videoGames, static function (VideoGame $videoGame) use ($manager): void {
+            $manager->persist($videoGame);
+        });
 
         $manager->flush();
 

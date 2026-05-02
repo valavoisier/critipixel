@@ -17,7 +17,9 @@ final class UserFixtures extends Fixture
             ->setUsername(sprintf('user+%d', $index))
         );
 
-        array_walk($users, [$manager, 'persist']);
+        array_walk($users, static function (User $user) use ($manager): void {
+            $manager->persist($user);
+        });
 
         $manager->flush();
     }
