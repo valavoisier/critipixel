@@ -107,6 +107,8 @@ final class AddReviewTest extends FunctionalTestCase
 
     /**
      * Fournit les jeux de données invalides pour testShouldReturn422WhenFormDataIsInvalid.
+     *
+     * @return iterable<string, array{array<string, string>}>
      */
     public static function provideInvalidFormData(): iterable
     {
