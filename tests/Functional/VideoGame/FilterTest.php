@@ -89,7 +89,7 @@ final class FilterTest extends FunctionalTestCase
      * - "Action" → 10 jeux (13 au total)
      * - "Action" + "RPG" → 7 jeux
      
-     * @return iterable<string, array{tagNames: string[], expectedCount: int}>
+     * @return iterable<string, array{array<string>, int}>
      */
     public static function provideTagFilterCases(): iterable
     {

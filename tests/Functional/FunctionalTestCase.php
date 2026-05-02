@@ -29,7 +29,7 @@ abstract class FunctionalTestCase extends WebTestCase
     }
 
     /**
-     * @template T
+     * @template T of object
      * @param class-string<T> $id
      * @return T
      */
@@ -40,6 +40,9 @@ abstract class FunctionalTestCase extends WebTestCase
     }
 
     // get() est une méthode utilitaire pour faire des requêtes GET dans les tests fonctionnels, simplifiant ainsi l'accès aux différentes pages de l'application.
+    /**
+     * @param array<string, mixed> $parameters
+     */
     protected function get(string $uri, array $parameters = []): Crawler
     {
         return $this->client->request('GET', $uri, $parameters);

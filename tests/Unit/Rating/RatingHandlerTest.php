@@ -30,6 +30,7 @@ class RatingHandlerTest extends TestCase
 
     /**
      * @dataProvider provideRatingsForAverage
+     * @param array<int> $ratings
      */
     public function testCalculateAverage(array $ratings, ?int $expectedAverage): void
     {
@@ -56,6 +57,8 @@ class RatingHandlerTest extends TestCase
      * Fournit les jeux de données pour testCalculateAverage().
      * Chaque entrée représente un scénario de test.
      * iterable pour pouvoir yield plusieurs scénarios de test
+     *
+     * @return iterable<string, array{array<int>, int|null}>
      */
     public static function provideRatingsForAverage(): iterable 
     {
@@ -86,6 +89,7 @@ class RatingHandlerTest extends TestCase
 
     /**
      * @dataProvider provideRatingsForCount
+     * @param array<int> $ratings
      */
     public function testCountRatingsPerValue(array $ratings, int $expectedOne, int $expectedTwo, int $expectedThree, int $expectedFour, int $expectedFive): void
     {
@@ -117,6 +121,9 @@ class RatingHandlerTest extends TestCase
 
     // Data Provider pour testCountRatingsPerValue() : notes en entrée + compteurs attendus (one, two, three, four, five),
     // iterable pour pouvoir yield plusieurs scénarios de test
+    /**
+     * @return iterable<string, array{array<int>, int, int, int, int, int}>
+     */
     public static function provideRatingsForCount(): iterable
     {
         yield 'aucune note'    => [[], 0, 0, 0, 0, 0]; // pas de notes → tous les compteurs à 0
