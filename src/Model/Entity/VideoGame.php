@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -62,10 +61,10 @@ class VideoGame
     private ?string $test = null;
 
     #[Column(type: Types::DATE_IMMUTABLE)]
-    private DateTimeInterface $releaseDate;
+    private DateTimeImmutable $releaseDate;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private DateTimeImmutable $updatedAt;
+    private ?DateTimeImmutable $updatedAt;
 
     #[Range(min: 1, max: 5)]
     #[Column(nullable: true)]
@@ -78,14 +77,14 @@ class VideoGame
     private NumberOfRatingPerValue $numberOfRatingsPerValue;
 
     /**
-     * @var Collection<Tag>
+     * @var Collection<int, Tag>
      */
     #[ManyToMany(targetEntity: Tag::class)]
     #[JoinTable(name: 'video_game_tags')]
     private Collection $tags;
 
     /**
-     * @var Collection<Review>
+     * @var Collection<int, Review>
      */
     #[OneToMany(targetEntity: Review::class, mappedBy: 'videoGame')]
     private Collection $reviews;
@@ -216,7 +215,7 @@ class VideoGame
     }
 
     /**
-     * @return Collection<Tag>
+     * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
@@ -224,7 +223,7 @@ class VideoGame
     }
 
     /**
-     * @return Collection<Review>
+     * @return Collection<int, Review>
      */
     public function getReviews(): Collection
     {
