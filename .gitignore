@@ -21,3 +21,7 @@ php.local.ini
 /assets/vendor/
 ###< symfony/asset-mapper ###
 etapes du projet.txt
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
