@@ -32,6 +32,7 @@ final class RegisterTest extends FunctionalTestCase
 
     /**
      * @dataProvider provideInvalidFormData
+     * @param array<string, string> $formData
      */
     //vérifier que l'on ne peut pas s'inscrire avec des données invalides, puis vérifier que les erreurs de validation sont affichées et que l'utilisateur n'est pas créé en base de données
     //Retour 422 pour : username vide/non-unique/trop long, email vide/non-unique/invalide

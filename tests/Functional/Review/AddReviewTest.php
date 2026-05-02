@@ -80,6 +80,7 @@ final class AddReviewTest extends FunctionalTestCase
 
     /**
      * @dataProvider provideInvalidFormData
+     * @param array<string, string> $values
      */
     public function testShouldReturn422WhenFormDataIsInvalid(array $values): void
     {
