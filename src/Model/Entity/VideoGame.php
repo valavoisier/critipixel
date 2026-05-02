@@ -176,12 +176,12 @@ class VideoGame
         return $this;
     }
 
-    public function getReleaseDate(): DateTimeInterface
+    public function getReleaseDate(): DateTimeImmutable
     {
         return $this->releaseDate;
     }
 
-    public function setReleaseDate(DateTimeInterface $releaseDate): VideoGame
+    public function setReleaseDate(DateTimeImmutable $releaseDate): VideoGame
     {
         $this->releaseDate = $releaseDate;
         return $this;
