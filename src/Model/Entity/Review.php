@@ -53,6 +53,7 @@ class Review
     public function setVideoGame(VideoGame $videoGame): Review
     {
         $this->videoGame = $videoGame;
+
         return $this;
     }
 
@@ -64,6 +65,7 @@ class Review
     public function setUser(User $user): Review
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -75,6 +77,7 @@ class Review
     public function setRating(int $rating): Review
     {
         $this->rating = $rating;
+
         return $this;
     }
 
@@ -86,6 +89,7 @@ class Review
     public function setComment(?string $comment): Review
     {
         $this->comment = $comment;
+
         return $this;
     }
 }

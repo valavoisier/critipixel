@@ -10,8 +10,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class RegisterTest extends FunctionalTestCase
 {
-    //vérifier que l'on peut s'inscrire avec des données valides, puis vérifier que l'utilisateur a été créé en base de données avec les bonnes données et que le mot de passe est correctement hashé
-    //Inscription valide → redirect /auth/login, utilisateur en BDD, password hashé valide
+    // vérifier que l'on peut s'inscrire avec des données valides, puis vérifier que l'utilisateur a été créé en base de données avec les bonnes données et que le mot de passe est correctement hashé
+    // Inscription valide → redirect /auth/login, utilisateur en BDD, password hashé valide
     public function testThatRegistrationShouldSucceeded(): void
     {
         $this->get('/auth/register');
@@ -32,10 +32,11 @@ final class RegisterTest extends FunctionalTestCase
 
     /**
      * @dataProvider provideInvalidFormData
+     *
      * @param array<string, string> $formData
      */
-    //vérifier que l'on ne peut pas s'inscrire avec des données invalides, puis vérifier que les erreurs de validation sont affichées et que l'utilisateur n'est pas créé en base de données
-    //Retour 422 pour : username vide/non-unique/trop long, email vide/non-unique/invalide
+    // vérifier que l'on ne peut pas s'inscrire avec des données invalides, puis vérifier que les erreurs de validation sont affichées et que l'utilisateur n'est pas créé en base de données
+    // Retour 422 pour : username vide/non-unique/trop long, email vide/non-unique/invalide
     public function testThatRegistrationShouldFailed(array $formData): void
     {
         $this->get('/auth/register');
@@ -60,6 +61,7 @@ final class RegisterTest extends FunctionalTestCase
 
     /**
      * @param array<string, string> $overrideData
+     *
      * @return array<string, string>
      */
     public static function getFormData(array $overrideData = []): array
@@ -67,7 +69,7 @@ final class RegisterTest extends FunctionalTestCase
         return $overrideData + [
             'register[username]' => 'username',
             'register[email]' => 'user@email.com',
-            'register[plainPassword]' => 'SuperPassword123!'
+            'register[plainPassword]' => 'SuperPassword123!',
         ];
     }
 }

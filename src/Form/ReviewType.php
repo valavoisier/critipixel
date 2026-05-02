@@ -32,14 +32,14 @@ final class ReviewType extends AbstractType
                     '3' => 3,
                     '4' => 4,
                     '5' => 5,
-                ]
+                ],
             ])
             ->add('comment', TextareaType::class, [
                 'label' => 'Commentaire',
                 'required' => false,
                 'attr' => [
                     'placeholder' => 'Commentaire',
-                ]
+                ],
             ]);
     }
 }

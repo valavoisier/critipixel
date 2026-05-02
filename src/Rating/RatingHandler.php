@@ -26,12 +26,12 @@ final readonly class RatingHandler implements CalculateAverageRating, CountRatin
      * - Si le jeu n’a aucune review → moyenne = null
      * - Sinon : somme des notes / nombre de reviews, arrondi à l’entier supérieur
      */
-
     public function calculateAverage(VideoGame $videoGame): void
     {
         // Aucun avis → pas de moyenne
-        if (count($videoGame->getReviews()) === 0) {
+        if (0 === count($videoGame->getReviews())) {
             $videoGame->setAverageRating(null);
+
             return;
         }
 
@@ -44,7 +44,7 @@ final readonly class RatingHandler implements CalculateAverageRating, CountRatin
         );
 
         // Calcul de la moyenne arrondie au supérieur
-        $videoGame->setAverageRating((int) ceil($ratingsSum/ count($videoGame->getReviews())));
+        $videoGame->setAverageRating((int) ceil($ratingsSum / count($videoGame->getReviews())));
     }
 
     /**
@@ -63,7 +63,7 @@ final readonly class RatingHandler implements CalculateAverageRating, CountRatin
         $videoGame->getNumberOfRatingsPerValue()->clear();
 
         // Aucun avis → rien à compter
-        if (count($videoGame->getReviews()) === 0) {
+        if (0 === count($videoGame->getReviews())) {
             return;
         }
 

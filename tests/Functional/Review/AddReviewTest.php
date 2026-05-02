@@ -31,21 +31,21 @@ final class AddReviewTest extends FunctionalTestCase
 
         // 2. Soumission avec des données valides → redirection 302
         $this->client->submitForm('Poster', [
-            'review[rating]'  => 3,
+            'review[rating]' => 3,
             'review[comment]' => 'Super jeu !',
         ]);
-        //vérifie 2 assertions :
-        //Le code HTTP est un code de redirection (301, 302, 303, 307 ou 308)
-        //L'URL dans le header Location vaut /jeu-video-0
-        self::assertResponseRedirects('/jeu-video-0');//compte pour 2 assertions
+        // vérifie 2 assertions :
+        // Le code HTTP est un code de redirection (301, 302, 303, 307 ou 308)
+        // L'URL dans le header Location vaut /jeu-video-0
+        self::assertResponseRedirects('/jeu-video-0'); // compte pour 2 assertions
 
         // 3. La review est enregistrée en base avec les bonnes données
-        $this->getEntityManager()->clear();// vide le cache de l'EntityManager pour forcer la requête en base et éviter les données en cache
+        $this->getEntityManager()->clear(); // vide le cache de l'EntityManager pour forcer la requête en base et éviter les données en cache
         // Récupère la review en base pour vérifier qu'elle a été enregistrée correctement
-        $user      = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => 'user+1@email.com']);
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => 'user+1@email.com']);
         $videoGame = $this->getEntityManager()->getRepository(VideoGame::class)->findOneBy(['slug' => 'jeu-video-0']);
-        $review    = $this->getEntityManager()->getRepository(Review::class)->findOneBy([
-            'user'      => $user,
+        $review = $this->getEntityManager()->getRepository(Review::class)->findOneBy([
+            'user' => $user,
             'videoGame' => $videoGame,
         ]);
         self::assertNotNull($review); // vérifie que la review existe en base
@@ -80,6 +80,7 @@ final class AddReviewTest extends FunctionalTestCase
 
     /**
      * @dataProvider provideInvalidFormData
+     *
      * @param array<string, string> $values
      */
     public function testShouldReturn422WhenFormDataIsInvalid(array $values): void
@@ -88,7 +89,7 @@ final class AddReviewTest extends FunctionalTestCase
         $this->login('user+1@email.com');
 
         $this->get('/jeu-video-0');
-// dump($this->client->getResponse()->getStatusCode());// 200 page jeu chargée
+        // dump($this->client->getResponse()->getStatusCode());// 200 page jeu chargée
         self::assertResponseIsSuccessful();
 
         // disableValidation() est nécessaire pour bypasser la validation HTML du DomCrawler
@@ -98,8 +99,8 @@ final class AddReviewTest extends FunctionalTestCase
         $form->setValues($values);
         $this->client->submit($form);
 
-// dump($this->client->getResponse()->getStatusCode());//statut 422
-// dump($this->client->getResponse()->getContent());//formulaire avec erreurs
+        // dump($this->client->getResponse()->getStatusCode());//statut 422
+        // dump($this->client->getResponse()->getContent());//formulaire avec erreurs
         // Le formulaire est invalide → le contrôleur re-rend la vue avec un statut 422
         self::assertResponseStatusCodeSame(422);
         // Le formulaire est toujours affiché avec les erreurs
@@ -113,7 +114,7 @@ final class AddReviewTest extends FunctionalTestCase
      */
     public static function provideInvalidFormData(): iterable
     {
-        yield 'note manquante'        => [['review[rating]' => '',  'review[comment]' => 'Super jeu !']];
+        yield 'note manquante' => [['review[rating]' => '',  'review[comment]' => 'Super jeu !']];
         yield 'commentaire trop long' => [['review[rating]' => '3', 'review[comment]' => str_repeat('a', 1001)]];
     }
 
@@ -128,8 +129,8 @@ final class AddReviewTest extends FunctionalTestCase
     {
         // Aucun login : l'utilisateur est anonyme
         $this->get('/jeu-video-0');
-// dump($this->client->getResponse()->getStatusCode()); // 200 page jeu chargée publique
-// dump($this->client->getResponse()->getContent()); // html généré sans formulaire
+        // dump($this->client->getResponse()->getStatusCode()); // 200 page jeu chargée publique
+        // dump($this->client->getResponse()->getContent()); // html généré sans formulaire
         self::assertResponseIsSuccessful();
 
         // Le voter refuse l'accès → le formulaire ne doit pas être affiché
@@ -151,13 +152,13 @@ final class AddReviewTest extends FunctionalTestCase
         // Aucun login : l'utilisateur est anonyme
         $this->client->request('POST', '/jeu-video-0', [
             'review' => [
-                'rating'  => 3,
+                'rating' => 3,
                 'comment' => 'Super jeu !',
             ],
         ]);
-        
-// dump($this->client->getResponse()->getStatusCode()); // 302 redirection
-// dump($this->client->getResponse()->headers->all());  // Location: /auth/login
+
+        // dump($this->client->getResponse()->getStatusCode()); // 302 redirection
+        // dump($this->client->getResponse()->headers->all());  // Location: /auth/login
 
         // Le firewall form_login redirige l'anonyme vers la page de login
         self::assertResponseRedirects('/auth/login');

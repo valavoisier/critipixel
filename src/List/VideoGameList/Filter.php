@@ -15,7 +15,7 @@ final class Filter
         private ?string $search = null,
         private array $tags = [],
         // Indique si des IDs de tags ont été soumis mais ignorés par EntityType (IDs inexistants en BDD)
-        private bool $hasInvalidTags = false
+        private bool $hasInvalidTags = false,
     ) {
     }
 
@@ -27,6 +27,7 @@ final class Filter
     public function setSearch(?string $search): Filter
     {
         $this->search = $search;
+
         return $this;
     }
 
@@ -44,6 +45,7 @@ final class Filter
     public function setTags(array $tags): Filter
     {
         $this->tags = $tags;
+
         return $this;
     }
 
@@ -56,6 +58,7 @@ final class Filter
     public function setHasInvalidTags(bool $hasInvalidTags): Filter
     {
         $this->hasInvalidTags = $hasInvalidTags;
+
         return $this;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Rating;
 
 use App\Model\Entity\VideoGame;
+
 /**
  * Contrat pour tout service capable de calculer
  * la moyenne des notes d’un jeu vidéo.

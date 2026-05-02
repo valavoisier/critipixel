@@ -36,7 +36,7 @@ final class VideoGameRepository extends ServiceEntityRepository
                 $pagination->getDirection()->getSql()
             );
 
-        if ($filter->getSearch() !== null) {
+        if (null !== $filter->getSearch()) {
             $queryBuilder
                 ->andWhere(
                     $queryBuilder->expr()->orX(
@@ -45,12 +45,13 @@ final class VideoGameRepository extends ServiceEntityRepository
                         $queryBuilder->expr()->like('vg.test', ':search'),
                     )
                 )
-                ->setParameter('search', '%' . $filter->getSearch() . '%');
+                ->setParameter('search', '%'.$filter->getSearch().'%');
         }
 
         // Si des tags invalides ont été soumis, on force 0 résultat plutôt que d'ignorer le filtre
         if ($filter->hasInvalidTags()) {
             $queryBuilder->andWhere('1 = 0');
+
             return new Paginator($queryBuilder, fetchJoinCollection: true);
         }
 

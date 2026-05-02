@@ -30,11 +30,13 @@ abstract class FunctionalTestCase extends WebTestCase
 
     /**
      * @template T of object
+     *
      * @param class-string<T> $id
+     *
      * @return T
      */
     // service() est une méthode générique pour récupérer n'importe quel service du conteneur de dépendances de Symfony, ce qui facilite l'accès aux services nécessaires dans les tests fonctionnels.
-        protected function service(string $id): object
+    protected function service(string $id): object
     {
         return $this->client->getContainer()->get($id);
     }

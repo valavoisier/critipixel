@@ -49,9 +49,10 @@ final class FilterTest extends FunctionalTestCase
      * - aucun tag
      * - un tag
      * - plusieurs tags
-     * 
+     *
      * @dataProvider provideTagFilterCases
-     * @param string[] $tagNames   Noms des tags à sélectionner dans le filtre
+     *
+     * @param string[] $tagNames      Noms des tags à sélectionner dans le filtre
      * @param int      $expectedCount Nombre de cartes attendues sur la première page
      */
     public function testShouldFilterVideoGamesByTags(array $tagNames, int $expectedCount): void
@@ -63,7 +64,7 @@ final class FilterTest extends FunctionalTestCase
         $values = [];
         if (!empty($tagNames)) {
             $values['filter[tags]'] = array_map(
-                fn(string $name): int => $this->getEntityManager()
+                fn (string $name): int => $this->getEntityManager()
                     ->getRepository(Tag::class)
                     ->findOneBy(['name' => $name])
                     ->getId(),
@@ -71,10 +72,10 @@ final class FilterTest extends FunctionalTestCase
             );
         }
 
-        $this->client->submitForm('Filtrer', $values, 'GET');// valeurs envoyées dans l'URL
-// dump($this->client->getRequest()->query->all()); // paramètres GET envoyés
+        $this->client->submitForm('Filtrer', $values, 'GET'); // valeurs envoyées dans l'URL
+        // dump($this->client->getRequest()->query->all()); // paramètres GET envoyés
         self::assertResponseIsSuccessful();
-// dump($this->client->getResponse()->getContent()); // HTML de la page filtrée
+        // dump($this->client->getResponse()->getContent()); // HTML de la page filtrée
         // vérifie que le nombre de cartes affichées correspond au résultat attendu pour chaque cas de filtrage
         self::assertSelectorCount($expectedCount, 'article.game-card');
     }
@@ -88,29 +89,27 @@ final class FilterTest extends FunctionalTestCase
      * - aucun tag → 10 jeux (pagination)
      * - "Action" → 10 jeux (13 au total)
      * - "Action" + "RPG" → 7 jeux
-     
+     *
      * @return iterable<string, array{array<string>, int}>
      */
     public static function provideTagFilterCases(): iterable
     {
-        yield 'aucun tag'           => [[], 10];
-        yield 'tag Action seul'     => [['Action'], 10]; // 13 jeux, 10 par page
-        yield 'tags Action et RPG'  => [['Action', 'RPG'], 7]; // 7 jeux, tous sur la 1ère page
+        yield 'aucun tag' => [[], 10];
+        yield 'tag Action seul' => [['Action'], 10]; // 13 jeux, 10 par page
+        yield 'tags Action et RPG' => [['Action', 'RPG'], 7]; // 7 jeux, tous sur la 1ère page
     }
 
     /**
      * Un tag inexistant doit retourner 0 résultat.
-     * Approche différente: 
-     * — les cas valides utilisent submitForm (passe par le formulaire Symfony), 
-     * — le cas invalide utilise get() avec le paramètre brut dans l'URL 
+     * Approche différente:
+     * — les cas valides utilisent submitForm (passe par le formulaire Symfony),
+     * — le cas invalide utilise get() avec le paramètre brut dans l'URL
      * (car EntityType rejetterait l'ID inconnu avant même de soumettre via submitForm).
      */
     public function testShouldReturnNoResultsForNonExistentTag(): void
     {
         $this->get('/', ['filter' => ['tags' => [99999]]]);
-        self::assertResponseIsSuccessful();// la page se charge sans erreur même si le tag n’existe pas
-        self::assertSelectorCount(0, 'article.game-card');// aucun jeu ne correspond à ce tag fictif, donc 0 cartes affichées
+        self::assertResponseIsSuccessful(); // la page se charge sans erreur même si le tag n’existe pas
+        self::assertSelectorCount(0, 'article.game-card'); // aucun jeu ne correspond à ce tag fictif, donc 0 cartes affichées
     }
-
 }
-

@@ -13,7 +13,7 @@ class RatingHandlerTest extends TestCase
 {
     /**
      * Teste la méthode calculateAverage() avec plusieurs scénarios.
-     * 
+     *
      * Objectif :
      * Vérifier que la moyenne des notes d’un jeu vidéo est correctement calculée
      * dans plusieurs situations : aucune note, une seule note, plusieurs notes,
@@ -30,6 +30,7 @@ class RatingHandlerTest extends TestCase
 
     /**
      * @dataProvider provideRatingsForAverage
+     *
      * @param array<int> $ratings
      */
     public function testCalculateAverage(array $ratings, ?int $expectedAverage): void
@@ -49,22 +50,22 @@ class RatingHandlerTest extends TestCase
 
         // Vérification que la moyenne calculée correspond à la moyenne attendue
         // vérification type et valeur de la moyenne (int ou null)
-  
-      self::assertSame($expectedAverage, $videoGame->getAverageRating());
+
+        self::assertSame($expectedAverage, $videoGame->getAverageRating());
     }
 
     /**
      * Fournit les jeux de données pour testCalculateAverage().
      * Chaque entrée représente un scénario de test.
-     * iterable pour pouvoir yield plusieurs scénarios de test
+     * iterable pour pouvoir yield plusieurs scénarios de test.
      *
      * @return iterable<string, array{array<int>, int|null}>
      */
-    public static function provideRatingsForAverage(): iterable 
+    public static function provideRatingsForAverage(): iterable
     {
-        yield 'aucune note'      => [[], null]; // pas de notes → moyenne = null
-        yield 'une seule note'   => [[3], 3]; // une seule note → moyenne = cette note
-        yield 'plusieurs notes'  => [[1, 2, 3, 4, 5], 3];   // ceil(15/5) = 3
+        yield 'aucune note' => [[], null]; // pas de notes → moyenne = null
+        yield 'une seule note' => [[3], 3]; // une seule note → moyenne = cette note
+        yield 'plusieurs notes' => [[1, 2, 3, 4, 5], 3];   // ceil(15/5) = 3
         yield 'moyenne arrondie' => [[1, 2], 2];             // ceil(3/2) = ceil(1.5) = 2
     }
     /**
@@ -89,6 +90,7 @@ class RatingHandlerTest extends TestCase
 
     /**
      * @dataProvider provideRatingsForCount
+     *
      * @param array<int> $ratings
      */
     public function testCountRatingsPerValue(array $ratings, int $expectedOne, int $expectedTwo, int $expectedThree, int $expectedFour, int $expectedFive): void
@@ -99,7 +101,6 @@ class RatingHandlerTest extends TestCase
 
         // Ajout des reviews au jeu vidéo
         foreach ($ratings as $rating) {
-            //
             $review = (new Review())->setRating($rating);
             $videoGame->getReviews()->add($review);
         }
@@ -109,14 +110,14 @@ class RatingHandlerTest extends TestCase
         $ratingHandler->countRatingsPerValue($videoGame);
 
         // Vérification que les compteurs par valeur correspondent aux compteurs attendus
-        //On récupère l'objet NumberOfRatingPerValue et on vérifie chaque compteur individuellement. 
-        //On a 5 assertions par appel × 3 scénarios = 15 assertions au total (ok 3 tests, 15 assertions).
+        // On récupère l'objet NumberOfRatingPerValue et on vérifie chaque compteur individuellement.
+        // On a 5 assertions par appel × 3 scénarios = 15 assertions au total (ok 3 tests, 15 assertions).
         $counts = $videoGame->getNumberOfRatingsPerValue();
-        self::assertSame($expectedOne,   $counts->getNumberOfOne());
-        self::assertSame($expectedTwo,   $counts->getNumberOfTwo());
+        self::assertSame($expectedOne, $counts->getNumberOfOne());
+        self::assertSame($expectedTwo, $counts->getNumberOfTwo());
         self::assertSame($expectedThree, $counts->getNumberOfThree());
-        self::assertSame($expectedFour,  $counts->getNumberOfFour());
-        self::assertSame($expectedFive,  $counts->getNumberOfFive());
+        self::assertSame($expectedFour, $counts->getNumberOfFour());
+        self::assertSame($expectedFive, $counts->getNumberOfFive());
     }
 
     // Data Provider pour testCountRatingsPerValue() : notes en entrée + compteurs attendus (one, two, three, four, five),
@@ -126,8 +127,8 @@ class RatingHandlerTest extends TestCase
      */
     public static function provideRatingsForCount(): iterable
     {
-        yield 'aucune note'    => [[], 0, 0, 0, 0, 0]; // pas de notes → tous les compteurs à 0
-        yield 'notes variées'  => [[1, 1, 3, 5], 2, 0, 1, 0, 1]; // 2 notes de 1, 0 note de 2, 1 note de 3, 0 note de 4, 1 note de 5
+        yield 'aucune note' => [[], 0, 0, 0, 0, 0]; // pas de notes → tous les compteurs à 0
+        yield 'notes variées' => [[1, 1, 3, 5], 2, 0, 1, 0, 1]; // 2 notes de 1, 0 note de 2, 1 note de 3, 0 note de 4, 1 note de 5
         yield 'toutes valeurs' => [[1, 2, 3, 4, 5], 1, 1, 1, 1, 1]; // 1 note de chaque valeur de 1 à 5
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -61,10 +60,10 @@ class VideoGame
     private ?string $test = null;
 
     #[Column(type: Types::DATE_IMMUTABLE)]
-    private DateTimeImmutable $releaseDate;
+    private \DateTimeImmutable $releaseDate;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $updatedAt;
 
     #[Range(min: 1, max: 5)]
     #[Column(nullable: true)]
@@ -94,7 +93,7 @@ class VideoGame
         $this->numberOfRatingsPerValue = new NumberOfRatingPerValue();
         $this->tags = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -110,6 +109,7 @@ class VideoGame
     public function setTitle(string $title): VideoGame
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -123,7 +123,7 @@ class VideoGame
         $this->imageFile = $imageFile;
 
         if (null !== $imageFile) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTimeImmutable();
         }
     }
 
@@ -135,6 +135,7 @@ class VideoGame
     public function setImageName(?string $imageName): VideoGame
     {
         $this->imageName = $imageName;
+
         return $this;
     }
 
@@ -146,6 +147,7 @@ class VideoGame
     public function setImageSize(?int $imageSize): VideoGame
     {
         $this->imageSize = $imageSize;
+
         return $this;
     }
 
@@ -162,6 +164,7 @@ class VideoGame
     public function setDescription(string $description): VideoGame
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -173,20 +176,22 @@ class VideoGame
     public function setTest(?string $test): VideoGame
     {
         $this->test = $test;
+
         return $this;
     }
 
-    public function getReleaseDate(): DateTimeImmutable
+    public function getReleaseDate(): \DateTimeImmutable
     {
         return $this->releaseDate;
     }
 
-    public function setReleaseDate(DateTimeImmutable $releaseDate): VideoGame
+    public function setReleaseDate(\DateTimeImmutable $releaseDate): VideoGame
     {
         $this->releaseDate = $releaseDate;
+
         return $this;
     }
-        
+
     public function getRating(): ?int
     {
         return $this->rating;
@@ -195,6 +200,7 @@ class VideoGame
     public function setRating(?int $rating): VideoGame
     {
         $this->rating = $rating;
+
         return $this;
     }
 
@@ -206,6 +212,7 @@ class VideoGame
     public function setAverageRating(?int $averageRating): VideoGame
     {
         $this->averageRating = $averageRating;
+
         return $this;
     }
 
