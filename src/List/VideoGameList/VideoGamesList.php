@@ -159,7 +159,7 @@ final class VideoGamesList implements Countable, IteratorAggregate
 
     public function count(): int
     {
-        return count($this->data->getIterator());
+        return iterator_count($this->data->getIterator());
     }
 
     public function generateUrl(int $page): string
