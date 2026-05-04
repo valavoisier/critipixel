@@ -14,6 +14,6 @@ final class ShowTest extends FunctionalTestCase
     {
         $this->get('/jeu-video-0');
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Jeu vidéo BUGTEST');
+        self::assertSelectorTextContains('h1', 'Jeu vidéo 0');
     }
 }
